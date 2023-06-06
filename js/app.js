@@ -22,6 +22,8 @@ const validarFormulario = (event) => {
     mostrarAlerta('Error Agregue un termino de búsqueda');
     return;
   }
+
+  buscarImagenes(terminoBusqueda);
 };
 
 
@@ -42,4 +44,16 @@ const mostrarAlerta = (mensaje) => {
       alerta.remove();
     }, 2000);
   }
+};
+
+
+
+// * Busca las imagenes en la API
+const buscarImagenes = (terminoBusqueda) => {
+  const key = '37058740-fc59b10279e7ee3461bcbab29';
+  const URL = `https://pixabay.com/api/?key=${key}&q=${terminoBusqueda}`;
+
+  fetch(URL)
+    .then(respueta => respueta.json())
+    .then(resultado => console.log(resultado))
 };

@@ -1,8 +1,10 @@
 // * Variables
 const formulario = document.querySelector('#formulario');
 const resultados = document.querySelector('#resultado');
-const registroPorPagina = 40;
+const paginacionDiv = document.querySelector('#paginacion');
+const elementosPorPaginas = 40;
 let totalPaginas;
+let iterador;
 
 // * Eventos
 // * Caundo el documento esta listo
@@ -52,13 +54,12 @@ const mostrarAlerta = (mensaje) => {
 // * Busca las imagenes en la API
 const buscarImagenes = (terminoBusqueda) => {
   const key = '37058740-fc59b10279e7ee3461bcbab29';
-  const URL = `https://pixabay.com/api/?key=${key}&q=${terminoBusqueda}&per_page=100`;
+  const URL = `https://pixabay.com/api/?key=${key}&q=${terminoBusqueda}&per_page=${elementosPorPaginas}`;
 
   fetch(URL)
     .then(respueta => respueta.json())
     .then(resultado => {
-      totalPaginas = calcularPaginas(resultado.totalHits);
-      console.log(totalPaginas);
+      totalPaginas = calcularCantidadPaginas(resultado.totalHits);
       mostrarImagenes(resultado.hits);
     })
 };
@@ -92,10 +93,48 @@ const mostrarImagenes = (imagenes) => {
     </div>
     `;
   });
+
+  // Limpiamos el paginador previo
+  while (paginacionDiv.firstChild) {
+    paginacionDiv.firstChild.remove();
+  }
+
+  imprimirPaginador();
 };
 
 
 
 // * Calcula la cantidad de paginas para realizar la paginacion
 /* Calcular el todal de las paginas diviendo el total de elementos entre la cantidad de elementos que queremos por pagina y redondemos hacia arriba para no dejar elementos sobrantes */
-const calcularPaginas = (total) => parseInt(Math.ceil(total / registroPorPagina));
+const calcularCantidadPaginas = (total) => parseInt(Math.ceil(total / elementosPorPaginas));
+
+
+
+// * Imprime las paginas
+const imprimirPaginador = () => {
+  iterador = generadorPaginas(totalPaginas);
+
+  while (true) {
+    const { value, done } = iterador.next();
+
+    // Caundo el iterdor llegue al final sale de la funcion
+    if (done) return;
+
+    const boton = document.createElement('A');
+    boton.href = "#";
+    boton.dataset.pagina = value;
+    boton.textContent = value;
+    boton.classList.add('siguiente', 'bg-yellow-400', 'px-4', 'py-1', 'mr-2', 'font-bold', 'mb-10', 'uppercase', 'rounded');
+
+    paginacionDiv.appendChild(boton);
+  }
+};
+
+
+
+// * Genera las  paginacion
+function* generadorPaginas(total) {
+  for (let i = 1; i <= total; i++) {
+    yield i;
+  }
+};

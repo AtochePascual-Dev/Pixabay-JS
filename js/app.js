@@ -2,6 +2,7 @@
 const formulario = document.querySelector('#formulario');
 const resultados = document.querySelector('#resultado');
 const registroPorPagina = 40;
+let totalPaginas;
 
 // * Eventos
 // * Caundo el documento esta listo
@@ -55,7 +56,11 @@ const buscarImagenes = (terminoBusqueda) => {
 
   fetch(URL)
     .then(respueta => respueta.json())
-    .then(resultado => mostrarImagenes(resultado.hits))
+    .then(resultado => {
+      totalPaginas = calcularPaginas(resultado.totalHits);
+      console.log(totalPaginas);
+      mostrarImagenes(resultado.hits);
+    })
 };
 
 
@@ -88,3 +93,9 @@ const mostrarImagenes = (imagenes) => {
     `;
   });
 };
+
+
+
+// * Calcula la cantidad de paginas para realizar la paginacion
+/* Calcular el todal de las paginas diviendo el total de elementos entre la cantidad de elementos que queremos por pagina y redondemos hacia arriba para no dejar elementos sobrantes */
+const calcularPaginas = (total) => parseInt(Math.ceil(total / registroPorPagina));

@@ -54,16 +54,26 @@ const mostrarAlerta = (mensaje) => {
 
 
 // * Busca las imagenes en la API
-const buscarImagenes = (terminoBusqueda, paginaActual = 1) => {
+const buscarImagenes = async (terminoBusqueda, paginaActual = 1) => {
   const key = '37058740-fc59b10279e7ee3461bcbab29';
   const URL = `https://pixabay.com/api/?key=${key}&q=${terminoBusqueda}&per_page=${elementosPorPaginas}&page=${paginaActual}`;
 
-  fetch(URL)
-    .then(respueta => respueta.json())
-    .then(resultado => {
-      totalPaginas = calcularCantidadPaginas(resultado.totalHits);
-      mostrarImagenes(resultado.hits);
-    })
+  // fetch(URL)
+  //   .then(respueta => respueta.json())
+  //   .then(resultado => {
+  //     totalPaginas = calcularCantidadPaginas(resultado.totalHits);
+  //     mostrarImagenes(resultado.hits);
+  //   })
+
+  try {
+    const respueta = await fetch(URL);
+    const resultado = await respueta.json();
+    totalPaginas = calcularCantidadPaginas(resultado.totalHits);
+    mostrarImagenes(resultado.hits);
+  } catch (error) {
+    console.log(error);
+  }
+
 };
 
 
